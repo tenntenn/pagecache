@@ -18,7 +18,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.Handle("/", pagecache.CacheHanlder(http.HandlerFunc(handler), 10*time.Second))
+	http.Handle("/", pagecache.CacheHandlerFunc(handler, 10*time.Second))
 	http.ListenAndServe(":8080", nil)
 }
 ```

@@ -25,7 +25,11 @@ func (w *responseWriter) WriteHeader(status int) {
 	w.rw.WriteHeader(status)
 }
 
-func CacheHanlder(handler http.Handler, expire time.Duration) http.Handler {
+func CacheHandlerFunc(handler func(w http.ResponseWriter, r *http.Request), expire time.Duration) http.Handler {
+	return CacheHandler(http.HandlerFunc(handler), expire)
+}
+
+func CacheHandler(handler http.Handler, expire time.Duration) http.Handler {
 	cw := new(responseWriter)
 	var limit *time.Time
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
