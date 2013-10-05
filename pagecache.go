@@ -2,6 +2,7 @@ package pagecache
 
 import (
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -31,7 +32,11 @@ func CacheHandlerFunc(handler func(w http.ResponseWriter, r *http.Request), expi
 func CacheHandler(handler http.Handler, expire time.Duration) http.Handler {
 	cw := new(responseWriter)
 	var limit *time.Time
+	lock := sync.Mutex{}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lock.Lock()
+		defer lock.Unlock()
+
 		now := time.Now()
 		if limit == nil || (*limit).Before(now) {
 			l := now.Add(expire)
