@@ -9,8 +9,9 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"pagecache"
 	"time"
+
+    "github.com/tenntenn/pagecache"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
