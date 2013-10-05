@@ -1,14 +1,14 @@
 package pagecache
 
 import (
-	"bytes"
 	"net/http"
 	"time"
 )
 
 type responseWriter struct {
-	rw   http.ResponseWriter
-	buff *bytes.Buffer
+	rw     http.ResponseWriter
+	header http.Header
+	buff   []byte
 }
 
 func (w *responseWriter) Header() http.Header {
@@ -16,8 +16,7 @@ func (w *responseWriter) Header() http.Header {
 }
 
 func (w *responseWriter) Write(b []byte) (int, error) {
-	w.buff = new(bytes.Buffer)
-	w.buff.Write(b)
+	w.buff = b
 	return w.rw.Write(b)
 }
 
@@ -40,7 +39,7 @@ func CacheHandler(handler http.Handler, expire time.Duration) http.Handler {
 			cw.rw = w
 			handler.ServeHTTP(cw, r)
 		} else {
-			w.Write(cw.buff.Bytes())
+			w.Write(cw.buff)
 		}
 	})
 }
